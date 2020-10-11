@@ -1,0 +1,24 @@
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+logging:
+  file:
+    path: .
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} %-5level- %msg%n"
+
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+
+app:
+  datasource:
+    jdbc-url: jdbc:postgresql://localhost:5432/ecommerce
+    username: postgres
+    password: password
+    pool-size: 30

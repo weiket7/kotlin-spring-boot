@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>File Upload</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+    </head>
+    <body>
+		<div id="app" class="container">
+			<h1>Upload Invoice</h1>
+			<br>
+
+	        <form method="POST" action="localhost:8080/api/invoice/upload" enctype="multipart/form-data" >
+	            <input type="file" name="file" v-on:change="selectFile"/> <br/>
+	            </br>
+	            <input type="button" class="btn btn-primary" value="Upload" v-on:click="upload"/>
+	        </form>
+			<br>
+
+			<div class="alert alert-danger" v-if="error">
+				{{ error }}
+			</div>
+
+			<div v-if="uploading">
+				<div>{{ uploadMessage }} {{ progress }}%</div>
+
+				<div class="progress">
+				  <div class="progress-bar progress-bar-striped" v-bind:class="progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" v-bind:style="'width: '+progress+'%'"></div>
+				</div>
+			</div>
+	    </div>
+
+	    <script type="text/javascript">
+	    	var vm = new Vue({
+	    		el: "#app",
+	    		data: {
+					progress: 0,
+					uploadMessage: "",
+					file: null,
+					uploading: false,
+					error: null,
+	    		},
+	    		methods: {
+					selectFile: function(event) {
+						this.file = event.target.files[0];
+					},
+	    			upload: function() {
+	    				if(this.file == null) {
+	    					this.error = "Select a file";
+	    					return
+	    				}
+
+	    				this.error = null;
+	    				this.uploading = true;
+
+						var formData = new FormData();
+						formData.append("file", this.file);
+						var id = Date.now();
+						formData.append("id", id);
+
+	    				axios.post("http://localhost:8080/api/invoice/upload", formData)
+	    					.then(response => {
+	    						this.uploading = false;
+	    						this.progress = 100;
+	    						this.uploadMessage = "Completed"
+	    					})
+
+						var vue = this
+						var intervalId = setInterval(function() {
+							axios.get("http://localhost:8080/api/invoice/uploadProgress?id="+id)
+								.then(response => {
+									vue.progress = response.data.progress;
+									vue.uploadMessage = response.data.message
+									if(vue.progress === 100) {
+										clearInterval(intervalId);
+									}
+								})
+						}, 1000);
+    					
+
+	    			}
+	    		}
+
+	    	})
+	    </script>
+    </body>
+</html>
