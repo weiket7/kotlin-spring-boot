@@ -30,7 +30,7 @@ delete from Country;
 ## To run unit tests:
 1. In IntelliJ, right-click src/test/kotlin/com.ecommerce.invoice and select Run 'Tests in 'com.ecommerce.invoice''
 
-##Observations about data.csv
+## Observations about data.csv
 1. InvoiceNo can be numeric or number prefixed with a letter, there are 25900 unique InvoiceNo
 2. StockCode can be numeric, number suffixed with letter or other values like gift_0001_30, DCGSSBOY, there are 4070 unique StockCode and 1324 StockCode with more than one unique Description
 3. Description can be valid values, empty or values like damaged, ?, missing
@@ -41,7 +41,7 @@ delete from Country;
 8. One InvoiceNo has one CustomerId, one Country and 43 InvoiceNo have two InvoiceDate with the second InvoiceDate being one minute later
 9. One StockCode can be valid Description value, empty or values like damaged, ?, missing
 
-##Database structure
+## Database structure
 Given above observations about data.csv, the tables are:
 1. Country table having Id, Name
 2. Invoice table having Id, InvoiceNo, InvoiceDate, CustomerId, CountryId  
@@ -49,7 +49,7 @@ There is index on (InvoiceNo, CountryId)
 3. InvoiceStock table having Id, InvoiceNo, StockCode, Description, Quantity, UnitPrice  
 There is index on (InvoiceNo)
 
-###Technical details
+## Technical details
 1. Flyway is used for migration 
 2. kotlin-csv is used to parse CSV instead of not using a library and trying to meet RFC 4180 standard which is tedious  
 It can read data.csv containing 541910 rows within 2-3 seconds (or more depending on system)
@@ -59,11 +59,11 @@ Although they are similar and it's possible to merge them, the differentiation i
 5. Application writes log into external file spring.log
 6. Custom exceptions inherit ApiException and will be caught by ApiExceptionHandler which will return ApiExceptionResponse
 
-##Solution details
+## Solution details
 1. ecommerce.html demonstrates how frontend can send a unique id (Date.now()) during upload and get the progress by calling /api/invoice/uploadProgress?id=id
 2. For search and list, the response structure is an array of Invoice and each Invoice contains one or more InvoiceStock
 
-##In a real application and/or given more time I would:
+## In a real application and/or given more time I would:
 1. Add API authentication
 2. Ask PO/team whether need to validate file mime type
 3. Ask PO for more details about search, eg whether search by date, search by customer etc
